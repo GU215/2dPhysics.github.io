@@ -15,8 +15,8 @@ window.addEventListener("resize", function (e) {
     c.height = innerHeight;
     c.width = innerHeight / 9 * 16;
     const mag = c.width / 800;
-    console.log(mag)
 })
+
 
 c.addEventListener("mousedown", function (e) {
     e.preventDefault()
@@ -38,6 +38,7 @@ c.addEventListener("mousedown", function (e) {
             }
             inCircleTouch = true;
             circles[c.pos.id].isFixing = true;
+            c.style.cursor = "move"
         }
     }
 });
@@ -54,6 +55,7 @@ c.addEventListener("mousemove", function (e) {
         circles[c.pos.id].vecx = (cx - localStorage.cx);
         circles[c.pos.id].vecy = (cy - localStorage.cy);
         circles[c.pos.id].isFixing = true;
+        c.style.cursor = "move"
     }
 })
 
@@ -68,6 +70,7 @@ c.addEventListener("mouseup", function (e) {
         c.pos = null;
         inCircleTouch = false;
     }
+    c.style.cursor = "auto"
 })
 
 c.addEventListener("touchstart", function (e) {
@@ -127,7 +130,6 @@ c.addEventListener("touchend", function (e) {
     }
 })
 
-// 円の情報を登録
 function Circle(ctx, x, y, vecx, vecy, r, m, color) {
     this.ctx = ctx;
     this.x = x || 0;
@@ -142,26 +144,22 @@ function Circle(ctx, x, y, vecx, vecy, r, m, color) {
 
 Circle.prototype = {
     draw: function () {
-        // 円の描画
         ctx = ctx;
         ctx.beginPath();
         ctx.fillStyle = this.color;
         ctx.arc(this.x, this.y, this.r, 0 * Math.PI / 180, 360 * Math.PI / 180);
-        // ctx.fill();
+        ctx.lineTo(this.x, this.y)
         ctx.stroke();
         ctx.closePath();
     },
     isTouched: function (cx, cy, cr) {
-        // 円と円が触れているか
         return (this.x - cx) * (this.x - cx) + (this.y - cy) * (this.y - cy) <= (this.r + cr) * (this.r + cr)
     },
     inCircle: function (cx, cy) {
-        // マウスが円の中にあるか(正直上と統合したほうが楽)
         return (this.x - cx) * (this.x - cx) + (this.y - cy) * (this.y - cy) <= this.r * this.r
     },
     wall: function () {
 
-        // 壁に衝突した時の判定
         if (this.y - this.r < 50) {
             this.vecy *= -e;
             this.y = 50 + this.r;
@@ -181,15 +179,12 @@ Circle.prototype = {
     },
     reflect: function () {
 
-        // 重力
         this.vecy += gravity / 50;
         this.vecx += 0;
 
-        // 摩擦力
         this.vecx *= 0.995;
         this.vecy *= 0.995;
 
-        // 計算の反映
         this.x += this.vecx;
         this.y += this.vecy;
     }
@@ -270,33 +265,3 @@ function calDis(v1, v2) {
     display();
     window.requestAnimationFrame(loop);
 }());
-
-animation();
-
-function animation() {
-    let fps = 0;
-    let frameCount = 0;
-    let startTime;
-    let endTime;
-    startTime = new Date().getTime();
-
-    function animationLoop() {
-        frameCount++;
-        endTime = new Date().getTime();
-        if (endTime - startTime >= 1000) {
-            fps = frameCount;
-            frameCount = 0;
-            startTime = new Date().getTime();
-        }
-        requestAnimationFrame(animationLoop);
-        // document.querySelector("h1").innerHTML = "fps : " + fps;
-    }
-    animationLoop();
-}
-
-function indicator(circle) {
-    let p =
-
-        document.querySelector("p").innerHTML = p;
-}
-
